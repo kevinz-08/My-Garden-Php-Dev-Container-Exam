@@ -27,70 +27,35 @@ return function (App $app) {
         $group->delete('/{id}', [UserController::class, 'delete']);
     });
 
-    // get
-    $app->get('/users', function (Request $request, Response $response) {
-        $data = ['users' => ['Adrian', 'Maria', 'Pedro']];
-        $response->getBody()->write(json_encode($data));
-        return $response->withHeader('Content-Type', 'application/json');
-    });
-    
-    // ruta con parametros
-    $app->get('/users/{id}', function (Request $request, Response $response, $args) {
-        $userId = $args['id'];
-        $data = ['user' => "Usuario ID: $userId"];
-        $response->getBody()->write(json_encode($data));
+    // GET
+    $app->get('/usuarios', function ($request, $response, $args) {
+        $usuarios = [/* ... */];
+        $response->getBody()->write(json_encode($usuarios));
         return $response->withHeader('Content-Type', 'application/json');
     });
 
-    // post 
-    $app->post('/users', function (Request $request, Response $response) {
-        $body = $request->getBody()->getContents();
-        $data = json_decode($body, true);
-        
-        // procesar la creacion
-        $newUser = [
-            'id' => rand(1, 1000),
-            'name' => $data['name'],
-            'email' => $data['email']
-        ];
-        
-        $response->getBody()->write(json_encode($newUser));
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(201); // Created
+    // POST
+    $app->post('/usuarios', function ($request, $response, $args) {
+        $data = json_decode($request->getBody()->getContents(), true);
+        // procesar $data
+        $response->getBody()->write(json_encode(['mensaje' => 'Usuario creado']));
+        return $response->withStatus(201)->withHeader('Content-Type', 'application/json');
     });
 
-    // put
-    $app->put('/users/{id}', function (Request $request, Response $response, $args) {
-        $userId = $args['id'];
-        $body = $request->getBody()->getContents();
-        $data = json_decode($body, true);
-        
-        // actualizacion
-        $updatedUser = [
-            'id' => $userId,
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'updated_at' => date('Y-m-d H:i:s')
-        ];
-        
-        $response->getBody()->write(json_encode($updatedUser));
+    // PUT
+    $app->put('/usuarios/{id}', function ($request, $response, $args) {
+        $id = $args['id'];
+        $data = json_decode($request->getBody()->getContents(), true);
+        // actualizar usuario
         return $response->withHeader('Content-Type', 'application/json');
     });
 
-    // delete
-    $app->delete('/users/{id}', function (Request $request, Response $response, $args) {
-        $userId = $args['id'];
-        
-        // logica
-        $result = [
-            'message' => "Usuario $userId eliminado correctamente",
-            'deleted_at' => date('Y-m-d H:i:s')
-        ];
-        
-        $response->getBody()->write(json_encode($result));
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(200);
+    // DELETE
+    $app->delete('/usuarios/{id}', function ($request, $response, $args) {
+        $id = $args['id'];
+        // eliminar usuario
+        return $response->withStatus(204);
     });
+
+    $app->run();
 };
